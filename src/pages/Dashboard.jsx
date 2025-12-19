@@ -2,11 +2,15 @@ import { useEffect, useState, useRef } from "react";
 import { signOut } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { ref, onValue, set, push, update, remove } from "firebase/database";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import QRCode from "react-qr-code";
+
+// Add your logo import here (adjust path if needed)
+import logo from "./Minimalist AS Latter Logo.png"; // ← Change this path if your file is in a different folder
 
 export default function Dashboard() {
     const navigate = useNavigate();
+    const location = useLocation();
     const user = auth.currentUser;
     const [ownerName, setOwnerName] = useState("");
     const [customers, setCustomers] = useState({});
@@ -262,30 +266,90 @@ export default function Dashboard() {
         return new Date(Math.max(...dates));
     };
 
-    return (
-        <div className={`min-h-screen ${darkMode ? 'bg-gray-950 text-white' : 'bg-white text-gray-900'} transition-colors duration-500`}>
-            <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+    const isActive = (path) => location.pathname === path;
 
-                {/* Navbar - Updated as requested */}
-                <div className="mb-10 flex flex-wrap justify-center gap-4">
-                    <button className="px-8 py-4 rounded-2xl border-4 b bg-gray-600  border-gray-500 text-black font-bold text-lg shadow-lg transform -translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-600 hover:text-white hover:border-transparent hover:shadow-cyan-500/50 transition-all duration-300">
-                        🏠 Dashboard
-                    </button>
-                    <button onClick={() => navigate("/daily-account")} className="px-8 py-4 rounded-2xl border-4  bg-gray-600  border-gray-500 text-black font-bold text-lg shadow-lg transform hover:-translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white hover:border-transparent hover:shadow-pink-500/50 transition-all duration-300">
-                        📅 Daily Account
-                    </button>
-                    <button onClick={() => navigate("/daily-expense")} className="px-8 py-4 rounded-2xl border-4  bg-gray-600  border-gray-500 text-black font-bold text-lg shadow-lg transform hover:-translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-amber-600 hover:to-orange-600 hover:text-white hover:border-transparent hover:shadow-orange-500/50 transition-all duration-300">
-                        💸 Daily Expense Calculation
-                    </button>
-                    <button onClick={() => navigate("/reports")} className="px-8 py-4 rounded-2xl border-4  bg-gray-600  border-gray-500 text-blackfont-bold text-lg shadow-lg transform hover:-translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-green-600 hover:to-teal-600 hover:text-white hover:border-transparent hover:shadow-teal-500/50 transition-all duration-300">
-                        📊 Reports
-                    </button>
-                    <button onClick={() => navigate("/customers")} className="px-8 py-4 rounded-2xl border-4  bg-gray-600  border-gray-500 text-black font-bold text-lg shadow-lg transform hover:-translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 hover:text-white hover:border-transparent hover:shadow-red-500/50 transition-all duration-300">
-                        👥 All Customers
-                    </button>
-                    <button onClick={() => navigate("/settings")} className="px-8 py-4 rounded-2xl border-4  bg-gray-600  border-gray-500 text-black font-bold text-lg shadow-lg transform hover:-translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-gray-600 hover:to-gray-800 hover:text-white hover:border-transparent hover:shadow-gray-500/50 transition-all duration-300">
-                        ⚙️ Settings
-                    </button>
+    return (
+        <div className={`min-h-screen ${darkMode ? 'bg-gray-950 text-white' : 'bg-white text-gray-900'} transition-colors duration-500 relative`}>
+            {/* Beautiful Top-Left Logo */}
+            <div className="absolute top-6 left-6 z-30 pointer-events-none">
+                <div className="group relative">
+                    <img
+                        src={logo}
+                        alt="App Logo"
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl shadow-2xl border-4 border-transparent 
+                                   transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 
+                                   group-hover:shadow-cyan-500/60 group-hover:border-cyan-400/60"
+                    />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-600 
+                                    opacity-0 group-hover:opacity-40 blur-xl transition-opacity duration-500"></div>
+                </div>
+            </div>
+
+            <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto pt-28 sm:pt-32"> {/* Extra top padding for logo */}
+
+                {/* Beautiful Navbar with Active Highlight */}
+                <div className="mb-12">
+                    <div className="flex flex-wrap justify-center gap-5 sm:gap-6 lg:gap-8 px-4">
+                        <button className={`group relative px-8 py-5 rounded-3xl overflow-hidden text-white font-bold text-lg shadow-2xl transform transition-all duration-500 hover:scale-105
+                            ${isActive('/') || isActive('/dashboard')
+                                ? 'bg-gradient-to-br from-cyan-500 to-blue-700 shadow-cyan-500/80 scale-105 ring-4 ring-cyan-400/50'
+                                : 'bg-gradient-to-br from-blue-600 to-cyan-500 hover:shadow-cyan-500/60'}`}>
+                            <span className="relative z-10 flex items-center gap-3">
+                                🏠 Dashboard
+                            </span>
+                            <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-150 transition-transform duration-700 origin-center rounded-full"></div>
+                        </button>
+
+                        <button onClick={() => navigate("/daily-account")} className={`group relative px-8 py-5 rounded-3xl overflow-hidden text-white font-bold text-lg shadow-2xl transform transition-all duration-500 hover:scale-105
+                            ${isActive('/daily-account')
+                                ? 'bg-gradient-to-br from-pink-500 to-purple-700 shadow-pink-500/80 scale-105 ring-4 ring-pink-400/50'
+                                : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:shadow-pink-500/60'}`}>
+                            <span className="relative z-10 flex items-center gap-3">
+                                📅 Daily Account
+                            </span>
+                            <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-150 transition-transform duration-700 origin-center rounded-full"></div>
+                        </button>
+
+                        <button onClick={() => navigate("/daily-expense")} className={`group relative px-8 py-5 rounded-3xl overflow-hidden text-white font-bold text-lg shadow-2xl transform transition-all duration-500 hover:scale-105
+                            ${isActive('/daily-expense')
+                                ? 'bg-gradient-to-br from-orange-500 to-amber-600 shadow-orange-500/80 scale-105 ring-4 ring-orange-400/50'
+                                : 'bg-gradient-to-br from-amber-500 to-orange-600 hover:shadow-orange-500/60'}`}>
+                            <span className="relative z-10 flex items-center gap-3">
+                                💸 Daily Expense Calculation
+                            </span>
+                            <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-150 transition-transform duration-700 origin-center rounded-full"></div>
+                        </button>
+
+                        <button onClick={() => navigate("/reports")} className={`group relative px-8 py-5 rounded-3xl overflow-hidden text-white font-bold text-lg shadow-2xl transform transition-all duration-500 hover:scale-105
+                            ${isActive('/reports')
+                                ? 'bg-gradient-to-br from-teal-500 to-emerald-600 shadow-teal-500/80 scale-105 ring-4 ring-teal-400/50'
+                                : 'bg-gradient-to-br from-emerald-500 to-teal-600 hover:shadow-teal-500/60'}`}>
+                            <span className="relative z-10 flex items-center gap-3">
+                                📊 Reports
+                            </span>
+                            <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-150 transition-transform duration-700 origin-center rounded-full"></div>
+                        </button>
+
+                        <button onClick={() => navigate("/customers")} className={`group relative px-8 py-5 rounded-3xl overflow-hidden text-white font-bold text-lg shadow-2xl transform transition-all duration-500 hover:scale-105
+                            ${isActive('/customers')
+                                ? 'bg-gradient-to-br from-red-500 to-rose-600 shadow-red-500/80 scale-105 ring-4 ring-red-400/50'
+                                : 'bg-gradient-to-br from-rose-500 to-red-600 hover:shadow-red-500/60'}`}>
+                            <span className="relative z-10 flex items-center gap-3">
+                                👥 All Customers
+                            </span>
+                            <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-150 transition-transform duration-700 origin-center rounded-full"></div>
+                        </button>
+
+                        <button onClick={() => navigate("/settings")} className={`group relative px-8 py-5 rounded-3xl overflow-hidden text-white font-bold text-lg shadow-2xl transform transition-all duration-500 hover:scale-105
+                            ${isActive('/settings')
+                                ? 'bg-gradient-to-br from-gray-400 to-gray-700 shadow-gray-400/80 scale-105 ring-4 ring-gray-300/50'
+                                : 'bg-gradient-to-br from-gray-600 to-gray-800 hover:shadow-gray-500/60'}`}>
+                            <span className="relative z-10 flex items-center gap-3">
+                                ⚙️ Settings
+                            </span>
+                            <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-150 transition-transform duration-700 origin-center rounded-full"></div>
+                        </button>
+                    </div>
                 </div>
 
                 {/* Header */}

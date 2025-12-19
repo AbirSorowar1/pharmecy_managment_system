@@ -10,7 +10,8 @@ export default function Reports() {
     const [dailyIncome, setDailyIncome] = useState({});
     const [ownerName, setOwnerName] = useState("Boss");
     const [darkMode, setDarkMode] = useState(true);
-    const [selectedMonth, setSelectedMonth] = useState("");
+    const [selectedMonth, setSelectedMonth] = useState(""); // Main month selector
+    const [historyFilterMonth, setHistoryFilterMonth] = useState("all"); // New: for history table
 
     useEffect(() => {
         if (!user) {
@@ -54,7 +55,7 @@ export default function Reports() {
             }
         });
 
-        return Array.from(months).sort((a, b) => b.localeCompare(a));
+        return Array.from(months).sort((a, b) => b.localeCompare(a)); // newest first
     };
 
     useEffect(() => {
@@ -136,11 +137,16 @@ export default function Reports() {
         return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
     };
 
+    // Filter months for history table
+    const filteredMonths = historyFilterMonth === "all"
+        ? availableMonths
+        : [historyFilterMonth];
+
     return (
         <div className={`min-h-screen ${darkMode ? 'bg-gray-950 text-white' : 'bg-gray-50 text-gray-900'} transition-all duration-700`}>
             <div className="p-6 sm:p-8 lg:p-12 max-w-7xl mx-auto">
 
-                {/* Updated Navigation Bar with Daily Expense Button */}
+                {/* Navigation Bar */}
                 <div className="mb-12 flex flex-wrap justify-center gap-5">
                     {[
                         { to: "/dashboard", label: "🏠 Dashboard", gradient: "from-blue-600 to-cyan-600" },
@@ -171,10 +177,10 @@ export default function Reports() {
                     <p className="text-xl mt-4 opacity-80">Welcome back, <span className="font-bold text-teal-400">{ownerName}</span></p>
                 </div>
 
-                {/* Month Selector */}
+                {/* Main Month Selector (for Selected Month Summary) */}
                 {availableMonths.length > 0 && (
                     <div className="mb-12 text-center">
-                        <label className="text-xl font-semibold mr-4 opacity-90">Select Month:</label>
+                        <label className="text-xl font-semibold mr-4 opacity-90">Select Month for Summary:</label>
                         <select
                             value={selectedMonth}
                             onChange={(e) => setSelectedMonth(e.target.value)}
@@ -218,12 +224,14 @@ export default function Reports() {
                     </div>
                 )}
 
-                {/* All-Time Overview */}
-                <div className="bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 shadow-2xl">
+                {/* All-Time Business Overview with Monthly History */}
+                <div className="bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 shadow-2xl mt-12">
                     <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                         All-Time Business Overview
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+                    {/* Lifetime Totals */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
                         <div className="text-center">
                             <p className="text-lg opacity-80">Total Received</p>
                             <p className="text-4xl font-bold text-green-400 mt-3">{totalReceivedAll().toLocaleString()} Tk</p>
@@ -243,6 +251,54 @@ export default function Reports() {
                             </p>
                         </div>
                     </div>
+
+                    {/* Monthly Net Profit History with Filter */}
+                    {availableMonths.length > 0 && (
+                        <>
+                            <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+                                <h3 className="text-2xl font-semibold text-teal-300">Monthly Net Profit History</h3>
+                                <div className="flex items-center gap-4">
+                                    <label className="text-lg font-medium opacity-90">Filter Month:</label>
+                                    <select
+                                        value={historyFilterMonth}
+                                        onChange={(e) => setHistoryFilterMonth(e.target.value)}
+                                        className="px-6 py-3 rounded-xl bg-gray-800/70 border border-gray-700 text-lg focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/30 transition-all"
+                                    >
+                                        <option value="all">All Months</option>
+                                        {availableMonths.map(month => (
+                                            <option key={month} value={month}>
+                                                {formatMonthName(month)}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="overflow-x-auto rounded-2xl border border-gray-700">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-gray-800/50 border-b border-gray-700">
+                                            <th className="py-5 px-8 text-teal-400 font-bold">Month</th>
+                                            <th className="py-5 px-8 text-right text-green-400 font-bold">Net Profit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredMonths.map(month => {
+                                            const data = getMonthlyData(month);
+                                            return (
+                                                <tr key={month} className="border-b border-gray-800 hover:bg-gray-800/70 transition-all duration-200">
+                                                    <td className="py-5 px-8 text-lg">{formatMonthName(month)}</td>
+                                                    <td className={`py-5 px-8 text-right font-bold text-2xl ${data.net >= 0 ? 'text-green-300' : 'text-red-300'}`}>
+                                                        {data.net.toLocaleString()} Tk
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* Dark Mode Toggle */}

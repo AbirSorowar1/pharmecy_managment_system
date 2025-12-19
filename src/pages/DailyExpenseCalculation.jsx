@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { auth, db } from "../firebase";
-import { ref, onValue, push } from "firebase/database";
+import { ref, onValue, push, update, remove } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 
 export default function DailyExpenseCalculation() {
@@ -34,7 +34,7 @@ export default function DailyExpenseCalculation() {
             const data = snap.val();
             if (data) {
                 setOwnerName(data.name || "Boss");
-                setDailyEntries(data.dailyIncome || {}); // পরে dailyExpense করতে পারেন, এখন আপাতত dailyIncome রাখলাম
+                setDailyEntries(data.dailyIncome || {});
             }
         });
 
@@ -84,6 +84,27 @@ export default function DailyExpenseCalculation() {
         setAmount("");
         setDescription("");
         amountRef.current?.focus();
+    };
+
+    const handleUpdateEntry = (dateKey, entryKey, newAmount, newDescription) => {
+        if (!newAmount || isNaN(newAmount) || Number(newAmount) <= 0) {
+            alert("Please enter a valid amount");
+            return;
+        }
+
+        const entryRef = ref(db, `owners/${user.uid}/dailyIncome/${dateKey}/${entryKey}`);
+        update(entryRef, {
+            amount: Number(newAmount),
+            description: newDescription.trim() || "Daily Income",
+            timestamp: new Date().toISOString()
+        });
+    };
+
+    const handleDeleteEntry = (dateKey, entryKey) => {
+        if (window.confirm("Are you sure you want to delete this entry?")) {
+            const entryRef = ref(db, `owners/${user.uid}/dailyIncome/${dateKey}/${entryKey}`);
+            remove(entryRef);
+        }
     };
 
     const getEntriesForDate = (date) => {
@@ -153,7 +174,6 @@ export default function DailyExpenseCalculation() {
                     </button>
                 </div>
 
-                {/* বাকি সব UI আপনার দেওয়া কোডের মতোই রাখা হয়েছে */}
                 {/* Add Income Card */}
                 <div className="bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 mb-10 shadow-2xl">
                     <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
@@ -245,13 +265,37 @@ export default function DailyExpenseCalculation() {
                                             <div className="mt-6 space-y-4 pl-6 border-l-4 border-green-500">
                                                 {getEntriesForDate(date).map((entry) => (
                                                     <div key={entry.key} className="bg-gray-800/70 rounded-2xl p-5 flex justify-between items-center shadow-inner">
-                                                        <div>
+                                                        <div className="flex-1">
                                                             <p className="font-semibold text-lg">{entry.description}</p>
                                                             <p className="text-sm opacity-70">
                                                                 {new Date(entry.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                                                             </p>
                                                         </div>
-                                                        <p className="text-2xl font-bold text-green-400">+{entry.amount} Tk</p>
+                                                        <p className="text-2xl font-bold text-green-400 mx-8">+{entry.amount} Tk</p>
+                                                        <div className="flex gap-3">
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    const newAmount = prompt("Edit amount (Tk):", entry.amount);
+                                                                    const newDesc = prompt("Edit description:", entry.description);
+                                                                    if (newAmount !== null && newDesc !== null) {
+                                                                        handleUpdateEntry(date, entry.key, newAmount, newDesc);
+                                                                    }
+                                                                }}
+                                                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-medium transition"
+                                                            >
+                                                                ✏️ Edit
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleDeleteEntry(date, entry.key);
+                                                                }}
+                                                                className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-xl text-sm font-medium transition"
+                                                            >
+                                                                🗑️ Delete
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
