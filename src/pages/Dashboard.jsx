@@ -47,7 +47,6 @@ export default function Dashboard() {
         else document.documentElement.classList.remove('dark');
     }, [darkMode]);
 
-    // Focus amount field when a customer is selected
     useEffect(() => {
         if (selectedCustomer) {
             amountInputRef.current?.focus();
@@ -83,7 +82,7 @@ export default function Dashboard() {
         setEditTxn(null);
         setShowQR(false);
         setShowProfileModal(false);
-        setAmount(""); // Clear amount for fresh entry
+        setAmount("");
     };
 
     const handleCreateCustomer = async () => {
@@ -118,7 +117,6 @@ export default function Dashboard() {
         }
     };
 
-    // New: Handle transaction directly on button press without extra confirm
     const handleAddTransaction = (type) => {
         if (!amount || !selectedCustomer || isNaN(amount) || Number(amount) <= 0) {
             alert("Please enter a valid amount!");
@@ -133,17 +131,15 @@ export default function Dashboard() {
             date: new Date().toISOString()
         });
 
-        setAmount(""); // Clear input immediately
+        setAmount("");
         setTransactionDone(true);
 
-        // Auto-focus back to amount field for next quick entry
         setTimeout(() => {
             amountInputRef.current?.focus();
             setTransactionDone(false);
         }, 800);
     };
 
-    // New: Enter key in amount field triggers "Add Due" (most common action)
     const handleAmountKeyDown = (e) => {
         if (e.key === "Enter") {
             handleAddTransaction("add");
@@ -270,29 +266,29 @@ export default function Dashboard() {
         <div className={`min-h-screen ${darkMode ? 'bg-gray-950 text-white' : 'bg-white text-gray-900'} transition-colors duration-500`}>
             <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
 
-                {/* Navbar unchanged */}
+                {/* Navbar - Updated as requested */}
                 <div className="mb-10 flex flex-wrap justify-center gap-4">
-                    <button className="px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold text-lg shadow-lg shadow-cyan-500/50 transform -translate-y-1 flex items-center gap-3">
+                    <button className="px-8 py-4 rounded-2xl border-4 b bg-gray-600  border-gray-500 text-black font-bold text-lg shadow-lg transform -translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-600 hover:text-white hover:border-transparent hover:shadow-cyan-500/50 transition-all duration-300">
                         🏠 Dashboard
                     </button>
-                    <button onClick={() => navigate("/daily-account")} className="px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-lg shadow-lg hover:shadow-pink-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3">
+                    <button onClick={() => navigate("/daily-account")} className="px-8 py-4 rounded-2xl border-4  bg-gray-600  border-gray-500 text-black font-bold text-lg shadow-lg transform hover:-translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white hover:border-transparent hover:shadow-pink-500/50 transition-all duration-300">
                         📅 Daily Account
                     </button>
-                    <button onClick={() => navigate("/daily-expense")} className="px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-lg shadow-lg hover:shadow-orange-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3">
+                    <button onClick={() => navigate("/daily-expense")} className="px-8 py-4 rounded-2xl border-4  bg-gray-600  border-gray-500 text-black font-bold text-lg shadow-lg transform hover:-translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-amber-600 hover:to-orange-600 hover:text-white hover:border-transparent hover:shadow-orange-500/50 transition-all duration-300">
                         💸 Daily Expense Calculation
                     </button>
-                    <button onClick={() => navigate("/reports")} className="px-8 py-4 rounded-2xl bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold text-lg shadow-lg hover:shadow-teal-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3">
+                    <button onClick={() => navigate("/reports")} className="px-8 py-4 rounded-2xl border-4  bg-gray-600  border-gray-500 text-blackfont-bold text-lg shadow-lg transform hover:-translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-green-600 hover:to-teal-600 hover:text-white hover:border-transparent hover:shadow-teal-500/50 transition-all duration-300">
                         📊 Reports
                     </button>
-                    <button onClick={() => navigate("/customers")} className="px-8 py-4 rounded-2xl bg-gradient-to-r from-orange-600 to-red-600 text-white font-bold text-lg shadow-lg hover:shadow-red-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3">
+                    <button onClick={() => navigate("/customers")} className="px-8 py-4 rounded-2xl border-4  bg-gray-600  border-gray-500 text-black font-bold text-lg shadow-lg transform hover:-translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 hover:text-white hover:border-transparent hover:shadow-red-500/50 transition-all duration-300">
                         👥 All Customers
                     </button>
-                    <button onClick={() => navigate("/settings")} className="px-8 py-4 rounded-2xl bg-gradient-to-r from-gray-600 to-gray-800 text-white font-bold text-lg shadow-lg hover:shadow-gray-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3">
+                    <button onClick={() => navigate("/settings")} className="px-8 py-4 rounded-2xl border-4  bg-gray-600  border-gray-500 text-black font-bold text-lg shadow-lg transform hover:-translate-y-1 flex items-center gap-3 hover:bg-gradient-to-r hover:from-gray-600 hover:to-gray-800 hover:text-white hover:border-transparent hover:shadow-gray-500/50 transition-all duration-300">
                         ⚙️ Settings
                     </button>
                 </div>
 
-                {/* Header unchanged */}
+                {/* Header */}
                 <div className="mb-8 sm:mb-12 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                     <div>
                         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">Hello, {ownerName || "Boss"}</h1>
@@ -306,13 +302,13 @@ export default function Dashboard() {
                         <button onClick={() => setDarkMode(!darkMode)} className="p-3 sm:p-4 rounded-xl border border-gray-600 hover:bg-gray-800 transition">
                             {darkMode ? '☀️' : '🌙'}
                         </button>
-                        <button onClick={handleLogout} className="px-6 sm:px-10 py-3 sm:py-4 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition text-sm sm:text-base">
+                        <button onClick={handleLogout} className="px-6 sm:px-10 py-3 sm:py-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition text-sm sm:text-base">
                             Logout
                         </button>
                     </div>
                 </div>
 
-                {/* Quick Stats unchanged */}
+                {/* Quick Stats */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
                     <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 text-center">
                         <p className="text-base sm:text-lg opacity-70">Total Customers</p>
@@ -331,7 +327,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
-                    {/* Customers Sidebar - unchanged except inputs */}
+                    {/* Customers Sidebar */}
                     <div className="lg:col-span-1">
                         <div className="bg-gray-900/80 backdrop-blur-md border border-gray-800 rounded-3xl p-6 flex flex-col h-full shadow-2xl">
                             <div className="flex justify-between items-center mb-6">
@@ -371,7 +367,7 @@ export default function Dashboard() {
                                             >
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); confirmDeleteCustomer(key); }}
-                                                    className="absolute top-4 right-4 w-9 h-9 rounded-full bg-red-600/10 text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-600 hover:text-white flex items-center justify-center"
+                                                    className="absolute top-4 right-4 w-9 h-9 rounded-full bg-red-600/20 text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-600 hover:text-white flex items-center justify-center"
                                                 >
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -425,7 +421,7 @@ export default function Dashboard() {
                                 />
                                 <button
                                     onClick={handleCreateCustomer}
-                                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 rounded-xl font-bold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-purple-900/50 transform hover:-translate-y-0.5"
+                                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 rounded-xl font-bold transition-all duration-300 shadow-lg"
                                 >
                                     ➕ Create Customer
                                 </button>
@@ -450,7 +446,7 @@ export default function Dashboard() {
                                             </p>
                                             <button
                                                 onClick={() => setShowProfileModal(true)}
-                                                className="mt-4 px-6 py-3 bg-gray-800 rounded-xl hover:bg-gray-700 transition text-sm sm:text-base"
+                                                className="mt-4 px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition text-sm sm:text-base"
                                             >
                                                 👤 Customer Info
                                             </button>
@@ -466,7 +462,7 @@ export default function Dashboard() {
                                                 className="w-full bg-gray-800 border border-gray-700 rounded-xl px-5 py-6 text-2xl sm:text-3xl text-center focus:outline-none focus:border-white"
                                                 value={amount}
                                                 onChange={(e) => setAmount(e.target.value)}
-                                                onKeyDown={handleAmountKeyDown} // Enter = Add Due
+                                                onKeyDown={handleAmountKeyDown}
                                             />
                                             <button onClick={startVoiceInput} className={`absolute right-4 top-1/2 -translate-y-1/2 text-2xl sm:text-3xl ${voiceListening ? 'animate-pulse' : ''}`}>
                                                 {voiceListening ? '🎙️' : '🎤'}
@@ -474,17 +470,17 @@ export default function Dashboard() {
                                         </div>
                                         <button
                                             onClick={() => handleAddTransaction("add")}
-                                            className="bg-red-600 py-6 rounded-xl font-bold text-xl hover:bg-red-700 shadow-lg transform hover:scale-105 transition-all"
+                                            className="bg-red-600 hover:bg-red-700 py-6 rounded-xl font-bold text-xl shadow-lg transform hover:scale-105 transition-all"
                                         >
                                             ➕ Add Due
                                         </button>
                                         <button
                                             onClick={() => handleAddTransaction("pay")}
-                                            className="bg-green-600 py-6 rounded-xl font-bold text-xl hover:bg-green-700 shadow-lg transform hover:scale-105 transition-all"
+                                            className="bg-green-600 hover:bg-green-700 py-6 rounded-xl font-bold text-xl shadow-lg transform hover:scale-105 transition-all"
                                         >
                                             ✔️ Received
                                         </button>
-                                        <button onClick={() => setShowQR(true)} className="bg-gray-700 py-6 rounded-xl font-bold text-lg hover:bg-gray-600">
+                                        <button onClick={() => setShowQR(true)} className="bg-gray-700 hover:bg-gray-600 py-6 rounded-xl font-bold text-lg transition">
                                             QR Share
                                         </button>
                                     </div>
@@ -496,14 +492,14 @@ export default function Dashboard() {
                                     )}
                                 </div>
 
-                                {/* Transaction History - unchanged */}
+                                {/* Transaction History */}
                                 <div className="bg-gray-900/70 border border-gray-800 rounded-2xl overflow-hidden">
                                     <div className="p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-800">
                                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                                             <label className="text-lg font-semibold">Filter:</label>
                                             <input type="date" className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-3" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} />
                                         </div>
-                                        <button onClick={exportToCSV} className="px-6 py-3 bg-gray-800 rounded-xl hover:bg-gray-700 transition text-sm sm:text-base">
+                                        <button onClick={exportToCSV} className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition text-sm sm:text-base">
                                             📄 Export History
                                         </button>
                                     </div>
@@ -542,9 +538,9 @@ export default function Dashboard() {
                                                         </td>
                                                         <td className="p-4">
                                                             {editTxn === t.key ? (
-                                                                <button onClick={saveEditTransaction} className="bg-yellow-600 px-4 py-2 rounded text-xs sm:text-sm font-bold">Save</button>
+                                                                <button onClick={saveEditTransaction} className="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-xs sm:text-sm font-bold transition">Save</button>
                                                             ) : (
-                                                                <button onClick={() => handleEditTransaction(t.key, t)} className="bg-gray-700 px-4 py-2 rounded text-xs sm:text-sm hover:bg-gray-600">Edit</button>
+                                                                <button onClick={() => handleEditTransaction(t.key, t)} className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-xs sm:text-sm transition">Edit</button>
                                                             )}
                                                         </td>
                                                     </tr>
@@ -562,7 +558,7 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* All Modals unchanged */}
+                {/* Modals */}
                 {showQR && selectedCustomer && (
                     <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={() => setShowQR(false)}>
                         <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
@@ -571,7 +567,7 @@ export default function Dashboard() {
                                 <QRCode value={`tel:${selectedCustomer.data.phone}`} size={200} />
                             </div>
                             <p className="text-center text-lg mt-6 opacity-80">Scan to Call</p>
-                            <button onClick={() => setShowQR(false)} className="mt-8 w-full py-4 bg-red-600 rounded-2xl font-bold text-lg hover:bg-red-700">
+                            <button onClick={() => setShowQR(false)} className="mt-8 w-full py-4 bg-red-600 hover:bg-red-700 rounded-2xl font-bold text-lg transition">
                                 Close
                             </button>
                         </div>
@@ -584,10 +580,10 @@ export default function Dashboard() {
                             <h3 className="text-2xl sm:text-3xl font-bold text-red-500 mb-4">Delete Customer?</h3>
                             <p className="text-base sm:text-lg mb-8">All data of <strong>{customers[customerToDelete]?.name}</strong> will be permanently deleted.</p>
                             <div className="flex flex-col sm:flex-row justify-end gap-4">
-                                <button onClick={() => setShowDeleteModal(false)} className="px-8 py-3 border border-gray-600 rounded-xl hover:bg-gray-800 order-2 sm:order-1">
+                                <button onClick={() => setShowDeleteModal(false)} className="px-8 py-3 border border-gray-600 rounded-xl hover:bg-gray-800 transition order-2 sm:order-1">
                                     Cancel
                                 </button>
-                                <button onClick={deleteCustomer} className="px-10 py-3 bg-red-600 rounded-xl font-bold hover:bg-red-700 order-1 sm:order-2">
+                                <button onClick={deleteCustomer} className="px-10 py-3 bg-red-600 hover:bg-red-700 rounded-xl font-bold transition order-1 sm:order-2">
                                     Delete
                                 </button>
                             </div>
@@ -631,7 +627,7 @@ export default function Dashboard() {
 
                                 <button
                                     onClick={() => setShowProfileModal(false)}
-                                    className="mt-10 w-full py-4 sm:py-5 bg-red-600 rounded-2xl font-bold text-lg sm:text-xl hover:bg-red-700 transition"
+                                    className="mt-10 w-full py-4 sm:py-5 bg-red-600 hover:bg-red-700 rounded-2xl font-bold text-lg sm:text-xl transition"
                                 >
                                     Close
                                 </button>
